@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "chalk": "^1.1.0",
+    "prettyjson": "^1.1.2",
     "readcommand": "^0.3.0",
     "tinkerhub": "^0.0.1"
   },
