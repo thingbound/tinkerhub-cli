@@ -133,12 +133,14 @@ function handleDevice(args, next) {
                             out.info(chalk.bgRed.white(' ERROR '), key);
                             out.group();
                             out.info(data.error);
-                            out.endGroup();
+                            out.groupEnd();
                         } else {
                             out.info(chalk.bgGreen.white(' SUCCESS '), key);
-                            out.group();
-                            out.info(data.value);
-                            out.endGroup();
+                            if(typeof data.value !== 'undefined') {
+                                out.group();
+                                out.info(data.value);
+                                out.groupEnd();
+                            }
                         }
                     });
 
