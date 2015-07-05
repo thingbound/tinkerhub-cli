@@ -60,5 +60,64 @@ module.exports = {
     groupEnd: function() {
         if(indent === 0) return;
         indent--;
+    },
+
+    table: function() {
+        return new Table(this);
     }
 };
+
+function padValue(value, length, c = ' ') {
+    let vLength = chalk.stripColor(value).length;
+    return value + (length > vLength ? Array(length - vLength+1).join(c) : '');
+}
+
+class Table {
+    constructor(parent) {
+        this._parent = parent;
+        this._rows = [];
+    }
+
+    columns() {
+        this._columns = Array.prototype.slice.call(arguments);
+        return this;
+    }
+
+    row() {
+        if(! this._columns) {
+            throw 'You need to set the columns before adding rows';
+        }
+
+        const row = Array.prototype.slice.call(arguments);
+        if(row.length !== this._columns.length) {
+            throw 'Number of entries in row does not match number of columns';
+        }
+
+        this._rows.push(row);
+
+        return this;
+    }
+
+    print() {
+        const widths = [];
+        for(let i=0; i<this._columns.length; i++) {
+            this._columns[i] = chalk.bold(this._parent.format(this._columns[i]));
+            widths[i] = chalk.stripColor(this._columns[i]).length;
+        }
+
+        this._rows.forEach(row => {
+            for(let i=0; i<row.length; i++) {
+                row[i] = this._parent.format(row[i]);
+                widths[i] = Math.max(widths[i], chalk.stripColor(row[i]).length);
+            }
+        });
+
+        let pad = (value, i) => padValue(value, widths[i]);
+
+        this._parent.info.apply(this._parent, this._columns.map(pad));
+        this._parent.info.apply(this._parent, this._columns.map((c, i) =>
+            padValue(padValue('', c.length, '='), widths[i]))
+        );
+        this._rows.forEach(row => this._parent.info.apply(this._parent, row.map(pad)));
+    }
+}

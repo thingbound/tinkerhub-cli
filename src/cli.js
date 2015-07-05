@@ -68,28 +68,36 @@ function withDevices(devices, func) {
     }
 }
 
-function pad(value, length) {
-    value = String(value);
-    return value + (length > value.length ? Array(length - value.length+1).join(' ') : '');
-}
 
 function handleDevices(args, next) {
     printDeviceList(allDevices, next);
 }
 
 function printDeviceList(devices, next) {
-    out.info(chalk.bold(pad('Id', 20)) + '  ' + chalk.bold(pad('Name', 30)) + '  ' + chalk.bold(pad('Tags', 50)));
-    out.info(pad('--', 20) + '  ' + pad('----', 30) + '  ' + pad('----', 50));
+    const table = out.table();
+    table.columns('Device', 'Tags');
+
     withDevices(devices, () => {
-        devices.forEach((device) =>
-            out.info(
-                pad(device.metadata.id, 20) + '  ' +
-                pad(device.metadata.def.name, 30) + '  ' +
-                pad(device.metadata.tags.filter(function(tag) {
+        const sorted = devices.listDevices().sort((a, b) => {
+            const an = a.metadata.name || a.metadata.id;
+            const bn = b.metadata.name || b.metadata.id;
+
+            if(an > bn) return 1;
+            if(an < bn) return -1;
+
+            return 0;
+        });
+
+        sorted.forEach((device) =>
+            table.row(
+                device.metadata.id,
+                device.metadata.tags.filter(function(tag) {
                     return tag !== device.metadata.id;
-                }).join(','), 50)
+                }).join(',')
             )
         );
+
+        table.print();
 
         out.info();
         out.info('Found', devices.length, devices.length === 1 ? 'device' : 'devices');
@@ -132,7 +140,7 @@ function handleDevice(args, next) {
                         if(data.error) {
                             out.info(chalk.bgRed.white(' ERROR '), key);
                             out.group();
-                            out.info(data.error);
+                            out.info(data.error.message);
                             out.groupEnd();
                         } else {
                             out.info(chalk.bgGreen.white(' SUCCESS '), key);
