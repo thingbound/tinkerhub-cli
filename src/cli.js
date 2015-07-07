@@ -73,6 +73,23 @@ function handleDevices(args, next) {
     printDeviceList(allDevices, next);
 }
 
+function coloredTagList(tags) {
+    return tags.map(tag => {
+        const idx = tag.indexOf(':');
+        if(idx === -1) return tag;
+
+        const ns = tag.substring(0, idx);
+        switch(ns) {
+            case 'type':
+                return chalk.blue(tag);
+            case 'cap':
+                return chalk.magenta(tag);
+        }
+
+        return chalk.gray(tag);
+    }).join(' ');
+}
+
 function printDeviceList(devices, next) {
     const table = out.table();
     table.columns('Device', 'Tags');
@@ -91,9 +108,9 @@ function printDeviceList(devices, next) {
         sorted.forEach((device) =>
             table.row(
                 device.metadata.id,
-                device.metadata.tags.filter(function(tag) {
+                coloredTagList(device.metadata.tags.filter(function(tag) {
                     return tag !== device.metadata.id;
-                }).join(',')
+                }))
             )
         );
 
