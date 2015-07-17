@@ -15,7 +15,11 @@ if(process.argv.length > 2) {
 } else {
     let sigints = 0;
 
-    readcommand.loop((err, args, str, next) => {
+    const opts = {
+        autocomplete: handleAutocomplete
+    };
+
+    readcommand.loop(opts, (err, args, str, next) => {
         if (err && err.code !== 'SIGINT') {
             throw err;
         } else if (err) {
@@ -41,17 +45,77 @@ if(process.argv.length > 2) {
 }
 
 function handleCommand(args, next) {
-    let devices;
-    switch(args[0]) {
-        case 'devices':
-            devices = tinkerhub.devices.all();
-            break;
+    let devices = toDevices(args[0]);
+    handleDeviceInvocations(devices, args, next);
+}
+
+function toDevices(arg) {
+    switch(arg) {
+        case 'all':
+            return tinkerhub.devices.all();
         default:
-            devices = tinkerhub.devices.tagged.apply(tinkerhub.devices, args[0].split(','));
-            break;
+            return tinkerhub.devices.tagged.apply(tinkerhub.devices, arg.split(','));
+    }
+}
+
+function filter(value, term) {
+    if(! term) return value;
+
+    if(Array.isArray(value)) {
+        return value.filter((v) => filter(v, term));
+    } else {
+        return value.indexOf(term) === 0;
+    }
+}
+
+function handleAutocomplete(args, callback) {
+    const items = [];
+
+    const all = tinkerhub.devices.all();
+
+    if(args.length === 0 || args.length === 1) {
+        items.push('all');
+
+        all.forEach(d => d.metadata.tags.forEach(tag => {
+            if(d.metadata.id !== tag && items.indexOf(tag) === -1) {
+                items.push(tag);
+            }
+        }));
+
+        items.sort();
     }
 
-    handleDeviceInvocations(devices, args, next);
+    if(args.length === 1) {
+        // The user has typed something, also autocomplete device ids
+        all.forEach(d => items.push(d.metadata.id));
+
+        items.push('exit');
+        items.push('close');
+    }
+
+    if(args.length === 2) {
+        // Metadata is always present
+        items.push('metadata');
+
+        // Autocomplete device actions
+        let devices = toDevices(args[0]);
+        devices.forEach(d => {
+            Object.keys(d.metadata.actions).forEach(action => {
+                if(items.indexOf(action) === -1) {
+                    items.push(action);
+                }
+            });
+        });
+
+        items.sort();
+    }
+
+    if(args.length === 3 && args[1] === 'metadata') {
+        // Metadata completion
+        items.push('tag');
+    }
+
+    return callback(null, filter(items, args[args.length - 1]));
 }
 
 function withDevices(devices, func) {
