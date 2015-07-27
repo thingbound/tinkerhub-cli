@@ -113,6 +113,8 @@ function handleAutocomplete(args, callback) {
     if(args.length === 3 && args[1] === 'metadata') {
         // Metadata completion
         items.push('tag');
+        items.push('removeTag');
+        items.push('setName');
     }
 
     return callback(null, filter(items, args[args.length - 1]));
@@ -131,6 +133,36 @@ function withDevices(devices, func) {
     }
 }
 
+function handleCall(promise, next) {
+    promise.then((result) => {
+        Object.keys(result).forEach((key) => {
+            const data = result[key];
+            if(data.error) {
+                out.info(chalk.bgRed.white(' ERROR '), key);
+                out.group();
+                out.info(data.error.message);
+                out.groupEnd();
+            } else {
+                out.info(chalk.bgGreen.white(' SUCCESS '), key);
+                if(typeof data.value !== 'undefined') {
+                    out.group();
+                    out.info(data.value);
+                    out.groupEnd();
+                }
+            }
+        });
+
+        next(true);
+    })
+    .fail(() => next(false))
+    .progress(data => {
+        out.info(chalk.bgWhite.black(' PROGRESS '), data.device);
+        out.group();
+        out.info(data.progress);
+        out.groupEnd();
+    })
+    .done();
+}
 
 function handleDeviceInvocations(devices, args, next) {
     withDevices(devices, () => {
@@ -142,51 +174,40 @@ function handleDeviceInvocations(devices, args, next) {
         if(args[1] === 'metadata') {
             if(args[2] === 'tag') {
                 if(args[3]) {
-                    devices.metadata.tag(args[3])
-                        .then(() => next(true))
-                        .fail(() => next(false))
-                        .done();
+                    handleCall(devices.metadata.tag(args[3]), next);
                 } else {
                     out.error('No tag specified');
                     return next(false);
                 }
+            } else if(args[2] === 'removeTag') {
+                if(args[3]) {
+                    handleCall(devices.metadata.removeTag(args[3]), next);
+                } else {
+                    out.error('No tag specified');
+                    return next(false);
+                }
+            } else if(args[2] === 'setName') {
+                if(args[3]) {
+                    handleCall(devices.metadata.setName(args[3]), next);
+                } else {
+                    out.error('No name specified');
+                    return next(false);
+                }
             } else {
-                out.error('Don\'t know what to do with metadata');
-                return next(false);
+                devices.forEach(device => {
+                    out.info(chalk.bgWhite.black(' METADATA '), device.metadata.id);
+                    out.group();
+                    out.info(device.metadata.def);
+                    out.groupEnd();
+                });
+
+                return next(true);
             }
         } else if(args[1]) {
             out.info('Invoking', chalk.gray(args[1]), 'on', devices.length, devices.length === 1 ? 'device' : 'devices');
 
             const action = devices[args[1]];
-            action.apply(devices, args.slice(2))
-                .then((result) => {
-                    Object.keys(result).forEach((key) => {
-                        const data = result[key];
-                        if(data.error) {
-                            out.info(chalk.bgRed.white(' ERROR '), key);
-                            out.group();
-                            out.info(data.error.message);
-                            out.groupEnd();
-                        } else {
-                            out.info(chalk.bgGreen.white(' SUCCESS '), key);
-                            if(typeof data.value !== 'undefined') {
-                                out.group();
-                                out.info(data.value);
-                                out.groupEnd();
-                            }
-                        }
-                    });
-
-                    next(true);
-                })
-                .fail(() => next(false))
-                .progress(data => {
-                    out.info(chalk.bgWhite.black(' PROGRESS '), data.device);
-                    out.group();
-                    out.info(data.progress);
-                    out.groupEnd();
-                })
-                .done();
+            handleCall(action.apply(devices, args.slice(2)), next);
         } else {
             printDeviceList(devices, next);
         }
