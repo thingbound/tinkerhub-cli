@@ -11,10 +11,10 @@ module.exports = {
 
             const data = arguments[i];
             if(typeof data === 'string') {
-                const device = th.devices.get(data);
+                const device = th.devices.isAvailable(data) ? th.devices.get(data) : null;
                 if(device) {
                     if(device.metadata.def.name) {
-                        result += device.metadata.def.name + ' ' +
+                        result += device.metadata.name + ' ' +
                             chalk.gray('(' + device.metadata.id + ')');
                     } else {
                         result += chalk.gray(device.metadata.id);
