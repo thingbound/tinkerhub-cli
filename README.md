@@ -8,7 +8,7 @@ use to invoke a specific command directly.
 
 ```
 $ tinkerhub
-$ tinkerhub devices
+$ tinkerhub all
 $ tinkerhub type:light turnOn
 $ tinkerhub idOfDevice metadata tag livingroom
 ```

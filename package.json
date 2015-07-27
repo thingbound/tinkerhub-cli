@@ -1,6 +1,8 @@
 {
   "name": "tinkerhub-cli",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "description": "Command line client for interacting with Tinkerhub devices",
+  "repository": "aholstenson/tinkerhub-cli",
   "license": "MIT",
   "bin": {
     "tinkerhub": "./dist/cli.js"
@@ -12,7 +14,7 @@
     "chalk": "^1.1.0",
     "prettyjson": "^1.1.2",
     "readcommand": "^0.3.0",
-    "tinkerhub": "^0.0.1"
+    "tinkerhub": "^0.1.1"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
