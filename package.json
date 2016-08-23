@@ -5,19 +5,19 @@
   "repository": "aholstenson/tinkerhub-cli",
   "license": "MIT",
   "bin": {
-    "tinkerhub": "./dist/cli.js"
+    "tinkerhub": "./lib/cli.js"
   },
   "scripts": {
     "prepublish": "gulp build"
   },
   "dependencies": {
-    "chalk": "^1.1.0",
-    "prettyjson": "^1.1.2",
+    "chalk": "^1.1.3",
+    "prettyjson": "^1.1.3",
     "readcommand": "^0.3.0",
-    "tinkerhub": "^0.1.1"
+    "tinkerhub": "^0.2.0"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
-    "tinkerhub-build": "0.0.1"
+    "tinkerhub-build": "0.1.1"
   }
 }
