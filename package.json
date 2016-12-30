@@ -1,23 +1,27 @@
 {
   "name": "tinkerhub-cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Command line client for interacting with Tinkerhub devices",
-  "repository": "aholstenson/tinkerhub-cli",
+  "repository": "tinkerhub/tinkerhub-cli",
   "license": "MIT",
+  "keywords": [
+    "tinkerhub"
+  ],
   "bin": {
     "tinkerhub": "./lib/cli.js"
   },
   "scripts": {
-    "prepublish": "gulp build"
+    "prepublish": "node_modules/.bin/eslint lib",
+    "test": "node_modules/.bin/eslint lib"
   },
   "dependencies": {
     "chalk": "^1.1.3",
     "prettyjson": "^1.1.3",
     "readcommand": "^0.3.0",
-    "tinkerhub": "^0.2.0"
+    "tinkerhub": "^1.0.0"
   },
   "devDependencies": {
-    "gulp": "^3.9.0",
-    "tinkerhub-build": "0.1.1"
+    "eslint": "^3.12.2",
+    "eslint-plugin-node": "^3.0.5"
   }
 }
