@@ -15,6 +15,7 @@
     "quotes": [
       2,
       "single"
-    ]
+    ],
+    "no-process-exit": 0
   }
 }
