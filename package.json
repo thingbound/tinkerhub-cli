@@ -11,17 +11,17 @@
     "tinkerhub": "./lib/cli.js"
   },
   "scripts": {
-    "prepublish": "node_modules/.bin/eslint lib",
     "test": "node_modules/.bin/eslint lib"
   },
   "dependencies": {
-    "chalk": "^1.1.3",
-    "prettyjson": "^1.1.3",
+    "chalk": "^2.3.0",
+    "prettyjson": "^1.2.1",
     "readcommand": "^0.3.0",
-    "tinkerhub": "^1.0.0"
+    "strip-ansi": "^4.0.0",
+    "tinkerhub": "^2.0.0"
   },
   "devDependencies": {
-    "eslint": "^3.12.2",
-    "eslint-plugin-node": "^3.0.5"
+    "eslint": "^4.12.0",
+    "eslint-plugin-node": "^5.2.1"
   }
 }

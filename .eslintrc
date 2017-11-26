@@ -2,20 +2,23 @@
   "plugins": [ "node" ],
   "extends": [ "eslint:recommended", "plugin:node/recommended" ],
   "env": {},
-  "ecmaFeatures": {},
   "globals": {},
   "rules": {
+		"strict": [ "error", "global" ],
     "node/no-unsupported-features": [
       "error",
       {
-        "version": 4
+        "version": 6
       }
     ],
     "no-irregular-whitespace": 2,
     "quotes": [
       2,
       "single"
-    ],
-    "no-process-exit": 0
+		],
+		"no-unused-vars": [
+			"error",
+			{ "vars": "all", "args": "none", "ignoreRestSiblings": false }
+		]
   }
 }
