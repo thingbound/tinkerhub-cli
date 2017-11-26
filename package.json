@@ -18,7 +18,8 @@
     "prettyjson": "^1.2.1",
     "readcommand": "^0.3.0",
     "strip-ansi": "^4.0.0",
-    "tinkerhub": "^2.0.0"
+    "tinkerhub": "^2.0.0",
+    "update-notifier": "^2.3.0"
   },
   "devDependencies": {
     "eslint": "^4.12.0",
