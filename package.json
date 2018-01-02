@@ -1,6 +1,6 @@
 {
   "name": "tinkerhub-cli",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Command line client for interacting with Tinkerhub devices",
   "repository": "tinkerhub/tinkerhub-cli",
   "license": "MIT",
